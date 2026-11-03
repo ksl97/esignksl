@@ -23,13 +23,14 @@
         <h2>Verifikasi Dokumen Resmi</h2>
         <div id="loading" class="loading">Memuat data verifikasi dokumen...</div>
         <div id="result" style="display: none;">
-            <div class="badge badge-valid">✓ METADATA DOKUMEN VALID</div>
-            <div class="field"><div class="label">Jenis Dokumen</div><div class="val" id="valJenis"></div></div>
-            <div class="field"><div class="label">ID Dokumen</div><div class="val" id="valId"></div></div>
-            <div class="field"><div class="label">Penandatangan</div><div class="val" id="valNama"></div></div>
-            <div class="field"><div class="label">Perihal</div><div class="val" id="valPerihal"></div></div>
-            <div class="field"><div class="label">Tanggal Diterbitkan</div><div class="val" id="valTanggal"></div></div>
-        </div>
+    <div class="badge badge-valid">✓ METADATA DOKUMEN VALID</div>
+    <div class="field"><div class="label">Jenis Dokumen</div><div class="val" id="valJenis"></div></div>
+    <div class="field"><div class="label">ID Dokumen</div><div class="val" id="valId"></div></div>
+    <div class="field"><div class="label">Nama Penerima / Dokumen</div><div class="val" id="valPenerima"></div></div>
+    <div class="field"><div class="label">Penandatangan Resmi</div><div class="val" id="valPenandatangan"></div></div>
+    <div class="field"><div class="label">Perihal</div><div class="val" id="valPerihal"></div></div>
+    <div class="field"><div class="label">Tanggal Diterbitkan</div><div class="val" id="valTanggal"></div></div>
+</div>
         <div id="uploadSection" class="upload-box" style="display: none;">
             <p style="margin-top: 0; font-size: 14px; font-weight: 500;">Validasi Keaslian File Fisik (*Hash SHA-256):</p>
             <input type="file" id="pdfFile" accept="application/pdf" style="font-size: 13px;">
@@ -61,10 +62,11 @@
 
                     if (data.found && data.status === 'VALID') {
                         document.getElementById('valJenis').innerText = data.jenis_dokumen;
-                        document.getElementById('valId').innerText = data.id;
-                        document.getElementById('valNama').innerText = data.nama;
-                        document.getElementById('valPerihal').innerText = data.perihal;
-                        document.getElementById('valTanggal').innerText = data.tanggal;
+document.getElementById('valId').innerText = data.id;
+document.getElementById('valPenerima').innerText = data.penerima;
+document.getElementById('valPenandatangan').innerText = data.penandatangan;
+document.getElementById('valPerihal').innerText = data.perihal;
+document.getElementById('valTanggal').innerText = data.tanggal;
                         
                         document.getElementById('uploadSection').style.display = 'block';
                         document.getElementById('pdfFile').addEventListener('change', async (e) => {
