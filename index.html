@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Dokumen - eSign KSL</title>
+    <title>Verifikasi Dokumen Resmi - eSign KSL</title>
+    <!-- Favicon kustom -->
+    <link rel="icon" type="image/png" href="https://sites.google.com/u/0/sitesv-images-rt/AMxu72saidfnRfyi9QH0P10xjtFT7vd5__ZM2bFwgKO4ioCigtx-iONtUgcoI0ESIX0RTH4BgAMJrPpmvdAkebKoCNjXXleUocvcB7sgM2FWn2cGqFZdvakGmKvNlkJVzEu1yUMhuqxCihY33tS3fSaEuTuFDvru99Hw9NZNbUZbvn229hr8NJv85Cs8mm97=w16383">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); max-width: 550px; width: 100%; }
@@ -23,14 +25,14 @@
         <h2>Verifikasi Dokumen Resmi</h2>
         <div id="loading" class="loading">Memuat data verifikasi dokumen...</div>
         <div id="result" style="display: none;">
-    <div class="badge badge-valid">✓ METADATA DOKUMEN VALID</div>
-    <div class="field"><div class="label">Jenis Dokumen</div><div class="val" id="valJenis"></div></div>
-    <div class="field"><div class="label">ID Dokumen</div><div class="val" id="valId"></div></div>
-    <div class="field"><div class="label">Nama Penerima / Dokumen</div><div class="val" id="valPenerima"></div></div>
-    <div class="field"><div class="label">Penandatangan Resmi</div><div class="val" id="valPenandatangan"></div></div>
-    <div class="field"><div class="label">Perihal</div><div class="val" id="valPerihal"></div></div>
-    <div class="field"><div class="label">Tanggal Diterbitkan</div><div class="val" id="valTanggal"></div></div>
-</div>
+            <div class="badge badge-valid">✓ METADATA DOKUMEN VALID</div>
+            <div class="field"><div class="label">Jenis Dokumen</div><div class="val" id="valJenis">-</div></div>
+            <div class="field"><div class="label">ID Dokumen</div><div class="val" id="valId">-</div></div>
+            <div class="field"><div class="label">Nama Penerima / Dokumen</div><div class="val" id="valPenerima">-</div></div>
+            <div class="field"><div class="label">Penandatangan Resmi</div><div class="val" id="valPenandatangan">-</div></div>
+            <div class="field"><div class="label">Perihal</div><div class="val" id="valPerihal">-</div></div>
+            <div class="field"><div class="label">Tanggal Diterbitkan</div><div class="val" id="valTanggal">-</div></div>
+        </div>
         <div id="uploadSection" class="upload-box" style="display: none;">
             <p style="margin-top: 0; font-size: 14px; font-weight: 500;">Validasi Keaslian File Fisik (*Hash SHA-256):</p>
             <input type="file" id="pdfFile" accept="application/pdf" style="font-size: 13px;">
@@ -61,12 +63,12 @@
                     resultDiv.style.display = 'block';
 
                     if (data.found && data.status === 'VALID') {
-                        document.getElementById('valJenis').innerText = data.jenis_dokumen;
-document.getElementById('valId').innerText = data.id;
-document.getElementById('valPenerima').innerText = data.penerima;
-document.getElementById('valPenandatangan').innerText = data.penandatangan; // Pastikan menggunakan data.penandatangan
-document.getElementById('valPerihal').innerText = data.perihal;
-document.getElementById('valTanggal').innerText = data.tanggal;
+                        document.getElementById('valJenis').innerText = data.jenis_dokumen || '-';
+                        document.getElementById('valId').innerText = data.id || '-';
+                        document.getElementById('valPenerima').innerText = data.penerima || '-';
+                        document.getElementById('valPenandatangan').innerText = data.penandatangan || '-';
+                        document.getElementById('valPerihal').innerText = data.perihal || '-';
+                        document.getElementById('valTanggal').innerText = data.tanggal ? new Date(data.tanggal).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'}) : '-';
                         
                         document.getElementById('uploadSection').style.display = 'block';
                         document.getElementById('pdfFile').addEventListener('change', async (e) => {
@@ -85,7 +87,7 @@ document.getElementById('valTanggal').innerText = data.tanggal;
                             }
                         });
                     } else {
-                        resultDiv.innerHTML = `<div class="badge badge-invalid">✕ DOKUMEN TIDAK DITEMUKAN</div><p style="text-align:center; color:#4b5563;">ID tidak terdaftar dalam sistem.</p>`;
+                        resultDiv.innerHTML = `<div class="badge badge-invalid">✕ DOKUMEN TIDAK DITEMUKAN</div><p style="text-align:center; color:#4b5563;">ID dokumen tidak terdaftar atau belum valid dalam sistem.</p>`;
                     }
                 }).catch(() => { document.getElementById('loading').innerText = "Gagal menghubungkan ke server verifikasi."; });
         }
