@@ -3,93 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Dokumen PDF - eSign KSL</title>
+    <title>Verifikasi Dokumen - eSign KSL</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            max-width: 550px;
-            width: 100%;
-        }
-        h2 {
-            margin-top: 0;
-            font-size: 22px;
-            color: #0f172a;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .badge {
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 15px;
-        }
-        .badge-valid {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-        .badge-invalid {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-        .field {
-            margin-bottom: 12px;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 8px;
-        }
-        .label {
-            font-size: 12px;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .val {
-            font-size: 15px;
-            font-weight: 500;
-            color: #334155;
-            margin-top: 2px;
-        }
-        .upload-box {
-            margin-top: 25px;
-            border: 2px dashed #cbd5e1;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            background-color: #f8fafc;
-        }
-        .loading {
-            text-align: center;
-            color: #64748b;
-            font-style: italic;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); max-width: 550px; width: 100%; }
+        h2 { margin-top: 0; font-size: 22px; color: #0f172a; text-align: center; margin-bottom: 20px; }
+        .badge { padding: 10px 15px; border-radius: 8px; font-weight: bold; text-align: center; margin-bottom: 20px; font-size: 15px; }
+        .badge-valid { background-color: #d1fae5; color: #065f46; }
+        .badge-invalid { background-color: #fee2e2; color: #991b1b; }
+        .field { margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
+        .label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .val { font-size: 15px; font-weight: 500; color: #334155; margin-top: 2px; }
+        .upload-box { margin-top: 25px; border: 2px dashed #cbd5e1; padding: 20px; border-radius: 8px; text-align: center; background-color: #f8fafc; }
+        .loading { text-align: center; color: #64748b; font-style: italic; }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h2>Verifikasi Dokumen PDF</h2>
-        
+        <h2>Verifikasi Dokumen Resmi</h2>
         <div id="loading" class="loading">Memuat data verifikasi dokumen...</div>
-        
         <div id="result" style="display: none;">
-            <!-- Hasil metadata dari Google Sheets akan muncul di sini -->
+            <div class="badge badge-valid">✓ METADATA DOKUMEN VALID</div>
+            <div class="field"><div class="label">Jenis Dokumen</div><div class="val" id="valJenis"></div></div>
+            <div class="field"><div class="label">ID Dokumen</div><div class="val" id="valId"></div></div>
+            <div class="field"><div class="label">Penandatangan</div><div class="val" id="valNama"></div></div>
+            <div class="field"><div class="label">Perihal</div><div class="val" id="valPerihal"></div></div>
+            <div class="field"><div class="label">Tanggal Diterbitkan</div><div class="val" id="valTanggal"></div></div>
         </div>
-
         <div id="uploadSection" class="upload-box" style="display: none;">
             <p style="margin-top: 0; font-size: 14px; font-weight: 500;">Validasi Keaslian File Fisik (*Hash SHA-256):</p>
             <input type="file" id="pdfFile" accept="application/pdf" style="font-size: 13px;">
@@ -98,26 +38,20 @@
     </div>
 
     <script>
-        // URL Web App Google Apps Script terbaru Anda
         const API_URL = "https://script.google.com/macros/s/AKfycbwtZxnwQMdr1NM49aBGuLwU8iunwcJum4dhp0EypW5nx9M5GIyzfEsJSMDlU2fmojgNrg/exec";
-
-        // Mengambil parameter 'id' dari URL browser
         const urlParams = new URLSearchParams(window.location.search);
         const docId = urlParams.get('id');
 
-        // Fungsi lokal untuk menghitung hash SHA-256 dari file PDF yang diunggah
         async function calculatePDFHash(file) {
             const buffer = await file.arrayBuffer();
             const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
         if (!docId) {
-            document.getElementById('loading').innerText = "Silakan akses halaman ini melalui tautan atau QR Code yang valid pada dokumen.";
+            document.getElementById('loading').innerText = "Silakan akses halaman melalui tautan atau QR Code yang valid.";
         } else {
-            // Melakukan request data ke Google Apps Script Web App
             fetch(`${API_URL}?id=${docId}`)
                 .then(res => res.json())
                 .then(data => {
@@ -126,52 +60,32 @@
                     resultDiv.style.display = 'block';
 
                     if (data.found && data.status === 'VALID') {
-                        resultDiv.innerHTML = `
-                            <div class="badge badge-valid">✓ METADATA DOKUMEN VALID</div>
-                            <div class="field"><div class="label">ID Dokumen</div><div class="val">${data.id}</div></div>
-                            <div class="field"><div class="label">Penandatangan</div><div class="val">${data.nama}</div></div>
-                            <div class="field"><div class="label">Perihal</div><div class="val">${data.perihal}</div></div>
-                            <div class="field"><div class="label">Tanggal Diterbitkan</div><div class="val">${data.tanggal}</div></div>
-                        `;
+                        document.getElementById('valJenis').innerText = data.jenis_dokumen;
+                        document.getElementById('valId').innerText = data.id;
+                        document.getElementById('valNama').innerText = data.nama;
+                        document.getElementById('valPerihal').innerText = data.perihal;
+                        document.getElementById('valTanggal').innerText = data.tanggal;
                         
-                        // Tampilkan kotak unggah PDF untuk validasi hash
                         document.getElementById('uploadSection').style.display = 'block';
-
-                        const fileInput = document.getElementById('pdfFile');
-                        fileInput.addEventListener('change', async (e) => {
+                        document.getElementById('pdfFile').addEventListener('change', async (e) => {
                             const file = e.target.files[0];
                             if (!file) return;
-
                             const hashResultDiv = document.getElementById('hashResult');
                             hashResultDiv.innerText = "Menghitung hash file...";
-                            hashResultDiv.style.color = "#475569";
-
-                            try {
-                                const uploadedHash = await calculatePDFHash(file);
-                                
-                                if (uploadedHash === data.pdf_hash) {
-                                    hashResultDiv.style.color = "#065f46";
-                                    hashResultDiv.innerHTML = "✓ File PDF Cocok 100%! Dokumen asli dan tidak pernah dimodifikasi.";
-                                } else {
-                                    hashResultDiv.style.color = "#991b1b";
-                                    hashResultDiv.innerHTML = "✕ Peringatan: File PDF yang diunggah BERBEDA dengan dokumen asli (mungkin sudah diubah).";
-                                }
-                            } catch (err) {
+                            
+                            const uploadedHash = await calculatePDFHash(file);
+                            if (uploadedHash === data.pdf_hash) {
+                                hashResultDiv.style.color = "#065f46";
+                                hashResultDiv.innerHTML = "✓ File PDF Cocok 100%! Dokumen asli dan tidak pernah dimodifikasi.";
+                            } else {
                                 hashResultDiv.style.color = "#991b1b";
-                                hashResultDiv.innerText = "Gagal memproses file PDF.";
+                                hashResultDiv.innerHTML = "✕ Peringatan: File PDF yang diunggah BERBEDA dengan dokumen asli.";
                             }
                         });
-
                     } else {
-                        resultDiv.innerHTML = `
-                            <div class="badge badge-invalid">✕ DOKUMEN TIDAK DITEMUKAN</div>
-                            <p style="margin-top:12px; color:#4b5563; text-align:center;">ID dokumen tidak terdaftar dalam sistem.</p>
-                        `;
+                        resultDiv.innerHTML = `<div class="badge badge-invalid">✕ DOKUMEN TIDAK DITEMUKAN</div><p style="text-align:center; color:#4b5563;">ID tidak terdaftar dalam sistem.</p>`;
                     }
-                })
-                .catch(err => {
-                    document.getElementById('loading').innerText = "Gagal menghubungkan ke server verifikasi.";
-                });
+                }).catch(() => { document.getElementById('loading').innerText = "Gagal menghubungkan ke server verifikasi."; });
         }
     </script>
 </body>
