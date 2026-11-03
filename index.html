@@ -34,13 +34,11 @@
 </div>
 
 <script>
-  // URL API Google Apps Script Anda yang sudah terhubung
   const API_URL = "https://script.google.com/macros/s/AKfycbwtZxnwQMdr1NM49aBGuLwU8iunwcJum4dhp0EypW5nx9M5GIyzfEsJSMDlU2fmojgNrg/exec";
 
   const urlParams = new URLSearchParams(window.location.search);
   const docId = urlParams.get('id');
 
-  // Fungsi helper untuk menghitung SHA-256 dari file PDF secara lokal di browser
   async function calculatePDFHash(file) {
     const buffer = await file.arrayBuffer();
     const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
@@ -68,10 +66,8 @@
             <div class="field"><div class="label">Tanggal Diterbitkan</div><div class="val">${data.tanggal}</div></div>
           `;
           
-          // Tampilkan kotak unggah PDF jika data ditemukan
           document.getElementById('uploadSection').style.display = 'block';
 
-          // Event listener ketika user memilih file PDF
           const fileInput = document.getElementById('pdfFile');
           fileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
